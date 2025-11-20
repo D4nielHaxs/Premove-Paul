@@ -118,6 +118,8 @@ void moveX(int);
 void moveRight();
 void jump(bool);
 void gravCheck();
+void changePlayerPos(int);
+int convertToNum(char);
 const int jumpHeight = 2;
 
 // Variables for player
@@ -137,7 +139,7 @@ typedef struct  {int x, y;} Vec2;
 Vec2 headPosPL;
 Vec2 bodyPosPL;
 
-float moveSpeed = 100; // The delay in displaying the next move
+float moveSpeed = 300; // The delay in displaying the next move
 
 // Game Loop Variable
 bool gameOn = true;
@@ -341,7 +343,7 @@ void getInput()
             char c = getch();
 
             // All printable readable characters in ascii are from 36 - 126
-            if((int)c >= 36 && (int)c <= 126)
+            if(((int)c >= 36 && (int)c <= 126) || c == ' ')
             {
                 // We use our index to keep track of where we are on the Input array
                 inputData[inpIndex] = c;
@@ -381,13 +383,64 @@ void movePlayer(char inputData[],int inputLength)
     for(int i = 0; i < inputLength; i++)
     {
         // Updates the system on the position of the player
-        findPlayerPos();
-        bool canJump = curRoom[bodyPosPL.y + 1][bodyPosPL.x] != 0;
 
-        bool jumped = false;
+
+
         // Determine how the said data will be used, we can use a switch statement here
 
-        switch(inputData[i])
+        bool withinNumRange = ((int)inputData[i+1] >= 48) && ((int)inputData[i+1] <= 57);
+
+        if((i == inputLength - 1 && !withinNumRange) || !withinNumRange || inputLength == 1)
+        {
+            // When player uses the character only input style
+            changePlayerPos(inputData[i]);
+        } else
+        {
+            // When the player uses a line command
+
+            // Read the values of the line
+            // i + 1 is a the highest number
+            int moveTimes = 0;
+            int j = 0;
+
+            // Converts the string of numbers into a integer
+            while((int)inputData[i+1+j] >= 48 && (int)inputData[i+1+j] <= 57)
+            {
+                moveTimes *= 10;
+                moveTimes += convertToNum(inputData[i+1]);
+                j++;
+            }
+
+            // Does the movement n amount of times
+            for(int c = 0; c < moveTimes; c++)
+            {
+                changePlayerPos(inputData[i]);
+            }
+
+            i += j;
+        }
+    }
+
+
+    // We check if the player is grounded
+    findPlayerPos();
+    while(curRoom[bodyPosPL.y + 1][bodyPosPL.x] != 5 && curRoom[bodyPosPL.y+1][bodyPosPL.x] != 7 && curRoom[bodyPosPL.y+1][bodyPosPL.x] != 8)
+    {
+        gravCheck();
+    }
+
+    // After doing all those actions, we check if our current position is at the door
+    winCheck();
+
+}
+
+void changePlayerPos(int value)
+{
+        findPlayerPos();
+        bool canJump = curRoom[bodyPosPL.y + 1][bodyPosPL.x] != 0;
+        bool jumped = false;
+
+        switch(value)
         {
             case 'a':
             case 'A':
@@ -410,31 +463,46 @@ void movePlayer(char inputData[],int inputLength)
                 printf("\nYou stopped moving");
                 break;
             case ' ':
-                continue; break;
+                return;
+                break;
             default:
                 Beep(1000, moveSpeed);
                 printf("\nThat is not a valid movement option");
                 break;
-
         }
+
+        if(!jumped) gravCheck();
         drawScreen();
         waitDelay(moveSpeed);
-        if(!jumped)gravCheck();
-
-    }
+}
 
 
-    // We check if the player is grounded
-    findPlayerPos();
-    while(curRoom[bodyPosPL.y + 1][bodyPosPL.x] != 5 && curRoom[bodyPosPL.y+1][bodyPosPL.x] != 7 && curRoom[bodyPosPL.y+1][bodyPosPL.x] != 8)
+int convertToNum(char value)
+{
+
+    int converted = 0;
+
+    switch(value)
     {
-        gravCheck();
+        case '1': converted = 1; break;
+        case '2': converted = 2; break;
+        case '3': converted = 3; break;
+        case '4': converted = 4; break;
+        case '5': converted = 5; break;
+        case '6': converted = 6; break;
+        case '7': converted = 7; break;
+        case '8': converted = 8; break;
+        case '9': converted = 9; break;
+        case '0': converted = 0; break;
     }
 
-    // After doing all those actions, we check if our current position is at the door
-    winCheck();
+    return converted;
+
+
 
 }
+
+
 
 void moveX(int moveForce)
 {
