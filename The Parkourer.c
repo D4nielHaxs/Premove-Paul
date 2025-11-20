@@ -99,6 +99,11 @@ void update();
 void start();
 void initialize();
 
+// UI
+void startScreen();
+void drawGameOver();
+
+
 // Functions for displaying the screen
 void drawScreen();
 void printCell(int);
@@ -192,11 +197,66 @@ int main()
 void initialize()
 {
     // Start at a set room
-
+    startScreen();
 
     // Start from the beginning room
 
     //setRoom(0);
+}
+
+void startScreen()
+{
+    printf("******************************************************\n");
+    Sleep(100);
+    printf("*                                                    *\n");
+    Sleep(100);
+    printf("*              P R E M O V E   P A U L               *\n");
+    Sleep(100);
+    printf("*                                                    *\n");
+    Sleep(100);    printf("*                                                    *\n");
+    Sleep(100);
+    printf("*               This shit is so ass T-T              *\n");
+    Sleep(100);
+    printf("*                                                    *\n");
+    Sleep(100);
+    printf("*                 PRESS ANY BUTTON                   *\n");
+    Sleep(100);
+    printf("******************************************************\n");
+
+    while(!_kbhit());
+    getch();
+    system("cls");
+}
+
+void drawGameOver()
+{
+    system("cls");
+    printf("******************************************************\n");
+    Sleep(100);
+    printf("*                                                    *\n");
+    Sleep(100);
+    printf("*                   GIT GUD SCRUB                    *\n");
+    Sleep(100);
+    printf("*                     (##)                           *\n");
+    Sleep(100);
+    printf("*                     |()|                           *\n");
+    Sleep(100);    printf("*                    _|()|_ _                        *\n");
+    Sleep(100);
+    printf("*                   (()()()())                       *\n");
+    Sleep(100);
+    printf("*                   (        |                       *\n");
+    Sleep(100);
+    printf("*                   (        |                       *\n");
+    Sleep(100);
+    printf("*                    \\      /                        *\n");
+    Sleep(100);
+    printf("*                     |     |                        *\n");
+    Sleep(100);
+    printf("******************************************************\n");
+    Sleep(100);
+
+    while(!_kbhit());
+    getch();
 }
 
 // Beginning of the game function
@@ -235,7 +295,7 @@ void update()
 
 void gameOver()
 {
-
+    drawGameOver();
 }
 
 
